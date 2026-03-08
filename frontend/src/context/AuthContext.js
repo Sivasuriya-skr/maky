@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import axios from 'axios';
+import api from './axios'; // ✅ import your configured axios instance (adjust path if needed)
 
 const API_BASE_URL = '/api/auth';
 const AuthContext = createContext();
@@ -36,8 +36,8 @@ export function AuthProvider({ children }) {
   // --- LOGIN ---
   const login = async (emailOrUsername, password) => {
     try {
-      const res = await axios.post(`${API_BASE_URL}/login`, {
-        emailOrUsername, // ✅ Must match backend DTO field
+      const res = await api.post(`${API_BASE_URL}/login`, { // ✅ api instead of axios
+        emailOrUsername,
         password,
       });
 
@@ -68,7 +68,7 @@ export function AuthProvider({ children }) {
   // --- REGISTER ---
   const register = async (payload) => {
     try {
-      const res = await axios.post(`${API_BASE_URL}/register`, {
+      const res = await api.post(`${API_BASE_URL}/register`, { // ✅ api instead of axios
         username: payload.username,
         email: payload.email,
         password: payload.password,
@@ -86,13 +86,11 @@ export function AuthProvider({ children }) {
         setUser(newUser);
       }
 
-      // Return success with message - let component handle the display
       return { success: true, data: res.data, message: message || 'Registration successful! Welcome to BudgetWise.' };
     } catch (err) {
       const errorMsg =
         err.response?.data?.message || err.response?.data || 'Registration failed. Please try again.';
       console.error('Registration failed:', errorMsg);
-      // Return error - let component handle the display
       return {
         success: false,
         error: errorMsg,
@@ -105,7 +103,7 @@ export function AuthProvider({ children }) {
     try {
       const token = localStorage.getItem('bw_token');
       if (token) {
-        await axios.post(`${API_BASE_URL}/logout`, {}, {
+        await api.post(`${API_BASE_URL}/logout`, {}, { // ✅ api instead of axios
           headers: { Authorization: `Bearer ${token}` },
         });
       }
@@ -122,16 +120,16 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const token = localStorage.getItem('bw_token');
     if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`; // ✅ api instead of axios
     } else {
-      delete axios.defaults.headers.common['Authorization'];
+      delete api.defaults.headers.common['Authorization'];
     }
   }, [user]);
 
   // --- SEND OTP ---
   const sendOtp = async (email) => {
     try {
-      await axios.post(`${API_BASE_URL}/send-otp`, { email });
+      await api.post(`${API_BASE_URL}/send-otp`, { email }); // ✅ api instead of axios
       return { success: true };
     } catch (err) {
       return {
