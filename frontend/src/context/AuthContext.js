@@ -1,33 +1,33 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import api from './axios'; // ✅ import your configured axios instance (adjust path if needed)
+import React, { createContext, useContext, useEffect, useState } from "react";
+import api from "../api/axios"; // ✅ import your configured axios instance
 
-const API_BASE_URL = '/api/auth';
+const API_BASE_URL = "/api/auth";
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
-      const raw = localStorage.getItem('bw_user');
-      if (!raw || raw === 'undefined' || raw === 'null') return null;
+      const raw = localStorage.getItem("bw_user");
+      if (!raw || raw === "undefined" || raw === "null") return null;
       return JSON.parse(raw);
     } catch (err) {
-      console.warn('Corrupted bw_user data detected. Clearing...', err);
-      localStorage.removeItem('bw_user');
-      localStorage.removeItem('bw_token');
+      console.warn("Corrupted bw_user data detected. Clearing...", err);
+      localStorage.removeItem("bw_user");
+      localStorage.removeItem("bw_token");
       return null;
     }
   });
 
   useEffect(() => {
-    const token = localStorage.getItem('bw_token');
+    const token = localStorage.getItem("bw_token");
     if (token && !user) {
-      const raw = localStorage.getItem('bw_user');
-      if (raw && raw !== 'undefined' && raw !== 'null') {
+      const raw = localStorage.getItem("bw_user");
+      if (raw && raw !== "undefined" && raw !== "null") {
         try {
           setUser(JSON.parse(raw));
         } catch (err) {
-          localStorage.removeItem('bw_user');
-          localStorage.removeItem('bw_token');
+          localStorage.removeItem("bw_user");
+          localStorage.removeItem("bw_token");
         }
       }
     }
@@ -36,7 +36,8 @@ export function AuthProvider({ children }) {
   // --- LOGIN ---
   const login = async (emailOrUsername, password) => {
     try {
-      const res = await api.post(`${API_BASE_URL}/login`, { // ✅ api instead of axios
+      const res = await api.post(`${API_BASE_URL}/login`, {
+        // ✅ api instead of axios
         emailOrUsername,
         password,
       });
@@ -48,19 +49,22 @@ export function AuthProvider({ children }) {
           username,
           email,
           message,
-          joinDate: new Date().toLocaleString('default', { month: 'short', year: 'numeric' }),
+          joinDate: new Date().toLocaleString("default", {
+            month: "short",
+            year: "numeric",
+          }),
         };
-        localStorage.setItem('bw_token', token);
-        localStorage.setItem('bw_user', JSON.stringify(loggedUser));
+        localStorage.setItem("bw_token", token);
+        localStorage.setItem("bw_user", JSON.stringify(loggedUser));
         setUser(loggedUser);
       }
 
       return { success: true, token };
     } catch (err) {
-      console.error('Login failed:', err.response?.data || err.message);
+      console.error("Login failed:", err.response?.data || err.message);
       return {
         success: false,
-        error: err.response?.data?.message || 'Login failed',
+        error: err.response?.data?.message || "Login failed",
       };
     }
   };
@@ -68,7 +72,8 @@ export function AuthProvider({ children }) {
   // --- REGISTER ---
   const register = async (payload) => {
     try {
-      const res = await api.post(`${API_BASE_URL}/register`, { // ✅ api instead of axios
+      const res = await api.post(`${API_BASE_URL}/register`, {
+        // ✅ api instead of axios
         username: payload.username,
         email: payload.email,
         password: payload.password,
@@ -81,16 +86,22 @@ export function AuthProvider({ children }) {
 
       if (token && username && email) {
         const newUser = { username, email };
-        localStorage.setItem('bw_token', token);
-        localStorage.setItem('bw_user', JSON.stringify(newUser));
+        localStorage.setItem("bw_token", token);
+        localStorage.setItem("bw_user", JSON.stringify(newUser));
         setUser(newUser);
       }
 
-      return { success: true, data: res.data, message: message || 'Registration successful! Welcome to BudgetWise.' };
+      return {
+        success: true,
+        data: res.data,
+        message: message || "Registration successful! Welcome to BudgetWise.",
+      };
     } catch (err) {
       const errorMsg =
-        err.response?.data?.message || err.response?.data || 'Registration failed. Please try again.';
-      console.error('Registration failed:', errorMsg);
+        err.response?.data?.message ||
+        err.response?.data ||
+        "Registration failed. Please try again.";
+      console.error("Registration failed:", errorMsg);
       return {
         success: false,
         error: errorMsg,
@@ -101,28 +112,33 @@ export function AuthProvider({ children }) {
   // --- LOGOUT ---
   const logout = async () => {
     try {
-      const token = localStorage.getItem('bw_token');
+      const token = localStorage.getItem("bw_token");
       if (token) {
-        await api.post(`${API_BASE_URL}/logout`, {}, { // ✅ api instead of axios
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await api.post(
+          `${API_BASE_URL}/logout`,
+          {},
+          {
+            // ✅ api instead of axios
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
       }
     } catch (err) {
-      console.warn('Logout API failed:', err.message);
+      console.warn("Logout API failed:", err.message);
     } finally {
-      localStorage.removeItem('bw_token');
-      localStorage.removeItem('bw_user');
+      localStorage.removeItem("bw_token");
+      localStorage.removeItem("bw_user");
       setUser(null);
     }
   };
 
   // --- AUTO SET AUTH HEADER ---
   useEffect(() => {
-    const token = localStorage.getItem('bw_token');
+    const token = localStorage.getItem("bw_token");
     if (token) {
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`; // ✅ api instead of axios
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`; // ✅ api instead of axios
     } else {
-      delete api.defaults.headers.common['Authorization'];
+      delete api.defaults.headers.common["Authorization"];
     }
   }, [user]);
 
@@ -134,7 +150,8 @@ export function AuthProvider({ children }) {
     } catch (err) {
       return {
         success: false,
-        error: err.response?.data?.message || 'Failed to send verification code',
+        error:
+          err.response?.data?.message || "Failed to send verification code",
       };
     }
   };
