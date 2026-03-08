@@ -11,6 +11,7 @@ A modern, full-stack expense tracking application with AI-powered insights, buil
 ## 🌟 Features
 
 ### Core Functionality
+
 - **💳 Transaction Management** - Track income and expenses with detailed categorization
 - **📊 Budget Planning** - Set and monitor budgets for different categories
 - **🎯 Financial Goals** - Create and track progress towards savings goals
@@ -18,16 +19,19 @@ A modern, full-stack expense tracking application with AI-powered insights, buil
 - **📤 Data Export** - Export financial data in multiple formats (CSV, JSON, Excel, PDF)
 
 ### AI-Powered Features
+
 - **🤖 AI Insights** - Get intelligent spending analysis using Ollama integration
 - **💡 Smart Recommendations** - Personalized budget suggestions based on spending patterns
 - **📉 Trend Analysis** - AI-driven predictions and spending trend identification
 
 ### Social Features
+
 - **👥 Community** - Share financial tips and experiences
 - **💬 Comments & Likes** - Engage with community posts
 - **📱 Real-time Updates** - Stay connected with the community
 
 ### Security & Authentication
+
 - **🔐 JWT Authentication** - Secure token-based authentication
 - **👤 User Profiles** - Customizable user profiles with avatars
 - **🔒 Password Security** - BCrypt password hashing
@@ -36,6 +40,7 @@ A modern, full-stack expense tracking application with AI-powered insights, buil
 ## 🏗️ Architecture
 
 ### Backend (Spring Boot)
+
 ```
 backend/
 ├── src/main/java/com/budgetwise/
@@ -52,6 +57,7 @@ backend/
 ```
 
 ### Frontend (React)
+
 ```
 frontend/
 ├── src/
@@ -74,10 +80,11 @@ frontend/
 3. Update the file with your database credentials, JWT secret, and email settings
 
 ### Prerequisites
+
 - **Java 17** or higher
 - **Node.js 16+** and npm
 - **PostgreSQL 15+**
-- **Ollama** (for AI features)
+- **Groq API Key** (for AI features)
 - **Maven** (included via wrapper)
 
 ### Database Setup
@@ -85,11 +92,13 @@ frontend/
 **See [SETUP.md](SETUP.md) for detailed setup instructions.**
 
 1. Install PostgreSQL and create a database:
+
 ```sql
 CREATE DATABASE budgetwise;
 ```
 
 2. Copy and configure `backend/src/main/resources/application.properties`:
+
 ```bash
 cd backend/src/main/resources
 copy application.properties.example application.properties
@@ -99,11 +108,13 @@ copy application.properties.example application.properties
 ### Backend Setup
 
 1. Navigate to the backend directory:
+
 ```bash
 cd backend
 ```
 
 2. Run the Spring Boot application:
+
 ```bash
 # Windows
 .\mvnw.cmd spring-boot:run
@@ -117,39 +128,41 @@ The backend will start on `http://localhost:8080`
 ### Frontend Setup
 
 1. Navigate to the frontend directory:
+
 ```bash
 cd frontend
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Start the development server:
+
 ```bash
 npm start
 ```
 
 The frontend will start on `http://localhost:3000`
 
-### Ollama Setup (AI Features)
+### Groq AI Setup (AI Features)
 
-1. Install Ollama from [ollama.ai](https://ollama.ai)
+1. Get your Groq API key from [groq.com](https://groq.com)
 
-2. Pull the required model:
+2. Add your API key to the `.env` file:
+
 ```bash
-ollama pull llama3.2:1b
+GROQ_API_KEY=your_groq_api_key_here
 ```
 
-3. Ensure Ollama is running:
-```bash
-ollama run llama3.2:1b
-```
+3. The Groq AI service will be automatically used by the application
 
 ## 📦 Building for Production
 
 ### Backend
+
 ```bash
 cd backend
 .\mvnw.cmd clean package
@@ -157,6 +170,7 @@ java -jar target/budgetwise-backend-1.0.0.jar
 ```
 
 ### Frontend
+
 ```bash
 cd frontend
 npm run build
@@ -167,32 +181,38 @@ The optimized build will be in the `frontend/build` directory.
 ## 🔑 API Endpoints
 
 ### Authentication
+
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - User login
 - `GET /api/auth/profile` - Get user profile
 
 ### Transactions
+
 - `GET /api/transactions` - Get all transactions
 - `POST /api/transactions` - Create transaction
 - `PUT /api/transactions/{id}` - Update transaction
 - `DELETE /api/transactions/{id}` - Delete transaction
 
 ### Budgets
+
 - `GET /api/budgets` - Get all budgets
 - `POST /api/budgets` - Create budget
 - `PUT /api/budgets/{id}` - Update budget
 - `DELETE /api/budgets/{id}` - Delete budget
 
 ### Goals
+
 - `GET /api/goals` - Get all goals
 - `POST /api/goals` - Create goal
 - `PUT /api/goals/{id}` - Update goal
 - `DELETE /api/goals/{id}` - Delete goal
 
 ### AI Insights
+
 - `POST /api/ai/insights` - Get AI-powered spending insights
 
 ### Export
+
 - `GET /api/export/csv` - Export transactions as CSV
 - `GET /api/export/json` - Export transactions as JSON
 - `GET /api/export/excel` - Export transactions as Excel
@@ -201,6 +221,7 @@ The optimized build will be in the `frontend/build` directory.
 ## 🛠️ Technology Stack
 
 ### Backend
+
 - **Spring Boot 3.1.5** - Application framework
 - **Spring Security** - Authentication & authorization
 - **Spring Data JPA** - Database access
@@ -211,6 +232,7 @@ The optimized build will be in the `frontend/build` directory.
 - **iText** - PDF generation
 
 ### Frontend
+
 - **React 18** - UI library
 - **React Router** - Client-side routing
 - **Axios** - HTTP client
@@ -228,6 +250,7 @@ The optimized build will be in the `frontend/build` directory.
 ## 📊 Database Schema
 
 ### Main Tables
+
 - `users` - User accounts
 - `transactions` - Financial transactions
 - `budgets` - Budget plans
@@ -289,18 +312,21 @@ For support, please open an issue in the GitHub repository.
 ## 📸 Screenshots
 
 ### Login Page
+
 Modern authentication with glassmorphic design and animated background.
 
 ### Dashboard
+
 Comprehensive overview of financial health with charts and statistics.
 
 ### Transactions
+
 Easy-to-use transaction management with filtering and categorization.
 
 ### AI Insights
+
 Intelligent spending analysis powered by Ollama AI.
 
 ---
 
 **Made with ❤️ by VinuHashini1711**
-
