@@ -15,7 +15,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*") // ✅ Allow React frontend or any other client
+@CrossOrigin(origins = "https://maky.netlify.app") // ✅ Allow React frontend or any other client
 public class AuthController {
 
     private final AuthService authService;
