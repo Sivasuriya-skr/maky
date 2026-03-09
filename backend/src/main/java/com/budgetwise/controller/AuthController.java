@@ -15,47 +15,39 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://maky.netlify.app") // ✅ Allow React frontend or any other client
 public class AuthController {
 
     private final AuthService authService;
     private final PasswordResetService passwordResetService;
 
-    // ---------------- REGISTER ----------------
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {
             AuthResponse response = authService.register(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } 
-        catch (RuntimeException ex) {
+        } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new AuthResponse(null, null, null, "Registration failed: " + ex.getMessage()));
-        } 
-        catch (Exception ex) {
+        } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new AuthResponse(null, null, null, "Unexpected error: " + ex.getMessage()));
         }
     }
 
-    // ---------------- LOGIN (email or username) ----------------
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody AuthRequest request) {
         try {
             AuthResponse response = authService.authenticate(request);
             return ResponseEntity.ok(response);
-        } 
-        catch (RuntimeException ex) {
+        } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new AuthResponse(null, null, null, "Login failed: " + ex.getMessage()));
-        } 
-        catch (Exception ex) {
+        } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new AuthResponse(null, null, null, "Unexpected error: " + ex.getMessage()));
         }
     }
 
-    // ---------------- LOGOUT ----------------
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
@@ -63,22 +55,15 @@ public class AuthController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new AuthResponse(null, null, null, "No valid token provided"));
             }
-
             String token = authHeader.substring(7);
             authService.logout(token);
-
-            return ResponseEntity.ok(
-                    new AuthResponse(null, null, null, "Logout successful")
-            );
-
-        } 
-        catch (Exception ex) {
+            return ResponseEntity.ok(new AuthResponse(null, null, null, "Logout successful"));
+        } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new AuthResponse(null, null, null, "Logout failed: " + ex.getMessage()));
         }
     }
 
-    // ---------------- FORGOT PASSWORD ----------------
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
         try {
@@ -87,13 +72,8 @@ public class AuthController {
                 return ResponseEntity.badRequest()
                         .body(Map.of("success", false, "message", "Email is required"));
             }
-
             passwordResetService.createPasswordResetToken(email);
-            
-            return ResponseEntity.ok(
-                    Map.of("success", true, "message", "Password reset link sent to your email")
-            );
-
+            return ResponseEntity.ok(Map.of("success", true, "message", "Password reset link sent to your email"));
         } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("success", false, "message", ex.getMessage()));
@@ -103,24 +83,17 @@ public class AuthController {
         }
     }
 
-    // ---------------- RESET PASSWORD ----------------
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
         try {
             String token = request.get("token");
             String newPassword = request.get("newPassword");
-
             if (token == null || newPassword == null) {
                 return ResponseEntity.badRequest()
                         .body(Map.of("success", false, "message", "Token and new password are required"));
             }
-
             passwordResetService.resetPassword(token, newPassword);
-            
-            return ResponseEntity.ok(
-                    Map.of("success", true, "message", "Password reset successful")
-            );
-
+            return ResponseEntity.ok(Map.of("success", true, "message", "Password reset successful"));
         } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("success", false, "message", ex.getMessage()));
@@ -129,7 +102,7 @@ public class AuthController {
                     .body(Map.of("success", false, "message", "Failed to reset password"));
         }
     }
-    // ---------------- SEND OTP ----------------
+
     @PostMapping("/send-otp")
     public ResponseEntity<?> sendOtp(@RequestBody Map<String, String> request) {
         try {
@@ -138,13 +111,8 @@ public class AuthController {
                 return ResponseEntity.badRequest()
                         .body(Map.of("success", false, "message", "Email is required"));
             }
-
             authService.sendOtp(email);
-            
-            return ResponseEntity.ok(
-                    Map.of("success", true, "message", "Verification code sent to your email")
-            );
-
+            return ResponseEntity.ok(Map.of("success", true, "message", "Verification code sent to your email"));
         } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("success", false, "message", ex.getMessage()));
