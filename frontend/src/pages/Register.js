@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import '../styles/Register.css';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import "../styles/Register.css";
 
 export default function Register() {
   const [form, setForm] = useState({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    captchaInput: '',
-    otp: '',
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    captchaInput: "",
+    otp: "",
   });
 
-  const [captcha, setCaptcha] = useState('');
-  const [error, setError] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
+  const [captcha, setCaptcha] = useState("");
+  const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSendingOtp, setIsSendingOtp] = useState(false);
@@ -30,8 +30,8 @@ export default function Register() {
 
   // Generate random captcha
   const generateCaptcha = () => {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
-    let result = '';
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+    let result = "";
     for (let i = 0; i < 6; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
@@ -44,18 +44,25 @@ export default function Register() {
 
   const handleSendOtp = async () => {
     if (!form.email) {
-      setError('Please enter your email first.');
+      setError("Please enter your email first.");
       return;
     }
 
     setIsSendingOtp(true);
-    setError('');
+    setError("");
     const res = await sendOtp(form.email);
     setIsSendingOtp(false);
 
     if (res.success) {
       setOtpSent(true);
-      setSuccessMsg('Verification code sent to your email!');
+      if (res.otp) {
+        setForm((prev) => ({ ...prev, otp: res.otp }));
+        setSuccessMsg(
+          `Verification code sent to your email. Your code is: ${res.otp}`,
+        );
+      } else {
+        setSuccessMsg("Verification code sent to your email!");
+      }
     } else {
       setError(res.error);
     }
@@ -63,26 +70,26 @@ export default function Register() {
 
   const submit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccessMsg('');
+    setError("");
+    setSuccessMsg("");
 
     // --- Validations ---
     if (!form.username || !form.email || !form.password || !form.otp) {
-      setError('All fields including verification code are required.');
+      setError("All fields including verification code are required.");
       return;
     }
     if (form.password !== form.confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
     if (form.password.length < 8) {
-      setError('Password must be at least 8 characters');
+      setError("Password must be at least 8 characters");
       return;
     }
     if (form.captchaInput !== captcha) {
-      setError('Invalid captcha');
+      setError("Invalid captcha");
       generateCaptcha();
-      setForm({ ...form, captchaInput: '' });
+      setForm({ ...form, captchaInput: "" });
       return;
     }
 
@@ -99,17 +106,17 @@ export default function Register() {
     if (!res.success) {
       setError(res.error);
       generateCaptcha();
-      setForm({ ...form, captchaInput: '' });
+      setForm({ ...form, captchaInput: "" });
       return;
     }
 
     // ✅ Registration Success
-    setSuccessMsg(res.data?.message || 'Registration successful!');
-    setTimeout(() => navigate('/login'), 1500);
+    setSuccessMsg(res.data?.message || "Registration successful!");
+    setTimeout(() => navigate("/login"), 1500);
   };
 
   const togglePasswordVisibility = (field) => {
-    if (field === 'password') setShowPassword(!showPassword);
+    if (field === "password") setShowPassword(!showPassword);
     else setShowConfirmPassword(!showConfirmPassword);
   };
 
@@ -163,7 +170,7 @@ export default function Register() {
             <label htmlFor="email">
               <span>📧</span> Email
             </label>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div style={{ display: "flex", gap: "8px" }}>
               <input
                 id="email"
                 type="email"
@@ -180,19 +187,20 @@ export default function Register() {
                 disabled={isSendingOtp}
                 className="otp-btn"
                 style={{
-                  padding: '0 15px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
-                  color: 'white',
-                  cursor: 'pointer',
-                  fontSize: '13px',
-                  fontWeight: '600',
+                  padding: "0 15px",
+                  borderRadius: "8px",
+                  border: "none",
+                  background:
+                    "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
+                  color: "white",
+                  cursor: "pointer",
+                  fontSize: "13px",
+                  fontWeight: "600",
                   opacity: isSendingOtp ? 0.7 : 1,
-                  whiteSpace: 'nowrap'
+                  whiteSpace: "nowrap",
                 }}
               >
-                {isSendingOtp ? 'Sending...' : (otpSent ? 'Resend' : 'Send Code')}
+                {isSendingOtp ? "Sending..." : otpSent ? "Resend" : "Send Code"}
               </button>
             </div>
           </div>
@@ -219,10 +227,10 @@ export default function Register() {
             <label htmlFor="password">
               <span>🔐</span> Password
             </label>
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: "relative" }}>
               <input
                 id="password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={form.password}
                 onChange={handleChange}
@@ -231,22 +239,22 @@ export default function Register() {
               />
               <button
                 type="button"
-                onClick={() => togglePasswordVisibility('password')}
+                onClick={() => togglePasswordVisibility("password")}
                 style={{
-                  position: 'absolute',
+                  position: "absolute",
                   right: 14,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  border: 'none',
-                  background: 'none',
-                  font: 'inherit',
-                  cursor: 'pointer',
-                  padding: '8px',
-                  opacity: '0.6',
-                  transition: 'opacity 0.2s',
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  border: "none",
+                  background: "none",
+                  font: "inherit",
+                  cursor: "pointer",
+                  padding: "8px",
+                  opacity: "0.6",
+                  transition: "opacity 0.2s",
                 }}
               >
-                {showPassword ? '👁️' : '👁️‍🗨️'}
+                {showPassword ? "👁️" : "👁️‍🗨️"}
               </button>
             </div>
           </div>
@@ -256,10 +264,10 @@ export default function Register() {
             <label htmlFor="confirmPassword">
               <span>🔐</span> Confirm Password
             </label>
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: "relative" }}>
               <input
                 id="confirmPassword"
-                type={showConfirmPassword ? 'text' : 'password'}
+                type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
                 value={form.confirmPassword}
                 onChange={handleChange}
@@ -268,22 +276,22 @@ export default function Register() {
               />
               <button
                 type="button"
-                onClick={() => togglePasswordVisibility('confirm')}
+                onClick={() => togglePasswordVisibility("confirm")}
                 style={{
-                  position: 'absolute',
+                  position: "absolute",
                   right: 14,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  border: 'none',
-                  background: 'none',
-                  font: 'inherit',
-                  cursor: 'pointer',
-                  padding: '8px',
-                  opacity: '0.6',
-                  transition: 'opacity 0.2s',
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  border: "none",
+                  background: "none",
+                  font: "inherit",
+                  cursor: "pointer",
+                  padding: "8px",
+                  opacity: "0.6",
+                  transition: "opacity 0.2s",
                 }}
               >
-                {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+                {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
               </button>
             </div>
           </div>
@@ -293,19 +301,26 @@ export default function Register() {
             <label htmlFor="captcha">
               <span>🛡️</span> Captcha
             </label>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '10px' }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "8px",
+                alignItems: "center",
+                marginBottom: "10px",
+              }}
+            >
               <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  padding: '10px 16px',
-                  borderRadius: '8px',
-                  fontFamily: 'monospace',
-                  letterSpacing: '3px',
-                  userSelect: 'none',
-                  color: '#f1f5f9',
-                  fontWeight: 'bold',
-                  minWidth: '120px',
-                  textAlign: 'center',
+                  background: "rgba(255, 255, 255, 0.1)",
+                  padding: "10px 16px",
+                  borderRadius: "8px",
+                  fontFamily: "monospace",
+                  letterSpacing: "3px",
+                  userSelect: "none",
+                  color: "#f1f5f9",
+                  fontWeight: "bold",
+                  minWidth: "120px",
+                  textAlign: "center",
                 }}
               >
                 {captcha}
@@ -315,14 +330,14 @@ export default function Register() {
                 onClick={generateCaptcha}
                 title="Refresh captcha"
                 style={{
-                  border: 'none',
-                  background: 'rgba(102, 126, 234, 0.2)',
-                  color: '#667eea',
-                  cursor: 'pointer',
-                  fontSize: '18px',
-                  padding: '8px 12px',
-                  borderRadius: '8px',
-                  transition: 'all 0.2s',
+                  border: "none",
+                  background: "rgba(102, 126, 234, 0.2)",
+                  color: "#667eea",
+                  cursor: "pointer",
+                  fontSize: "18px",
+                  padding: "8px 12px",
+                  borderRadius: "8px",
+                  transition: "all 0.2s",
                 }}
               >
                 ↺
@@ -340,16 +355,15 @@ export default function Register() {
           </div>
 
           {/* Register Button */}
-          <button
-            type="submit"
-            className="auth-submit"
-          >
+          <button type="submit" className="auth-submit">
             Register
-            <span style={{ fontSize: '18px' }}>→</span>
+            <span style={{ fontSize: "18px" }}>→</span>
           </button>
 
           <div className="auth-link">
-            <p>Already have an account? <Link to="/login">Sign In</Link></p>
+            <p>
+              Already have an account? <Link to="/login">Sign In</Link>
+            </p>
           </div>
         </form>
       </div>

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
@@ -111,8 +112,12 @@ public class AuthController {
                 return ResponseEntity.badRequest()
                         .body(Map.of("success", false, "message", "Email is required"));
             }
-            authService.sendOtp(email);
-            return ResponseEntity.ok(Map.of("success", true, "message", "Verification code sent to your email"));
+            String otp = authService.sendOtp(email);
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("success", true);
+            response.put("message", "Verification code sent to your email");
+            response.put("otp", otp);
+            return ResponseEntity.ok(response);
         } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("success", false, "message", ex.getMessage()));

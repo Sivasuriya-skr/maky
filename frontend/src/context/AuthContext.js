@@ -145,8 +145,12 @@ export function AuthProvider({ children }) {
   // --- SEND OTP ---
   const sendOtp = async (email) => {
     try {
-      await api.post(`${API_BASE_URL}/send-otp`, { email }); // ✅ api instead of axios
-      return { success: true };
+      const res = await api.post(`${API_BASE_URL}/send-otp`, { email });
+      return {
+        success: true,
+        otp: res.data?.otp,
+        message: res.data?.message || "Verification code sent to your email",
+      };
     } catch (err) {
       return {
         success: false,

@@ -92,7 +92,7 @@ public class AuthService {
     }
 
     // ---------------- OTP ----------------
-    public void sendOtp(String email) {
+    public String sendOtp(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new RuntimeException("An account with this email already exists.");
         }
@@ -103,6 +103,7 @@ public class AuthService {
             // Keep local/dev registration flow usable even if the email provider is unavailable.
             // The OTP is still generated and stored in memory for manual verification during local testing.
         }
+        return otp;
     }
 
     // ---------------- LOGOUT ----------------

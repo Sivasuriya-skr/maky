@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -46,6 +47,6 @@ class AuthServiceTest {
                 .when(emailService)
                 .sendVerificationOtpEmail("test@example.com", "123456");
 
-        assertDoesNotThrow(() -> authService.sendOtp("test@example.com"));
+        assertEquals("123456", authService.sendOtp("test@example.com"));
     }
 }
