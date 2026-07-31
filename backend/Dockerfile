@@ -1,10 +1,20 @@
-FROM eclipse-temurin:17-jdk-alpine
+# Build stage
+FROM maven:3.9-eclipse-temurin-17 AS build
+WORKDIR /app
 
-WORKDIR /maky
+# Cache dependencies
+COPY pom.xml .
+RUN mvn -B dependency:go-offline
 
-COPY target/budgetwise-backend-1.0.0.jar maky.jar
-COPY .env .env
+COPY src ./src
+RUN mvn -B clean package -DskipTests
+
+# Runtime stage
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+
+COPY --from=build /app/target/budgetwise-backend-1.0.0.jar app.jar
 
 EXPOSE 8080
 
-CMD ["java","-jar","maky.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

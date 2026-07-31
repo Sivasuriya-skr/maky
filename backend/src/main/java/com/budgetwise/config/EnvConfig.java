@@ -1,4 +1,4 @@
-package main.java.com.budgetwise.config;
+package com.budgetwise.config;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.extern.slf4j.Slf4j;

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: process.env.REACT_APP_BACKEND_URL || "http://localhost:8080", // ✅ CRA uses REACT_APP_
+  baseURL: process.env.REACT_APP_BACKEND_URL || "", // empty = same-origin /api (proxied by nginx in Docker / CRA proxy in dev)
   headers: { "Content-Type": "application/json" },
 });
 

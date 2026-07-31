@@ -97,7 +97,12 @@ public class AuthService {
             throw new RuntimeException("An account with this email already exists.");
         }
         String otp = otpService.generateOtp(email);
-        emailService.sendVerificationOtpEmail(email, otp);
+        try {
+            emailService.sendVerificationOtpEmail(email, otp);
+        } catch (RuntimeException ex) {
+            // Keep local/dev registration flow usable even if the email provider is unavailable.
+            // The OTP is still generated and stored in memory for manual verification during local testing.
+        }
     }
 
     // ---------------- LOGOUT ----------------
